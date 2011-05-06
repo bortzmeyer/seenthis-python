@@ -1,0 +1,14 @@
+This module, currently in a very preliminar stage, allows to make
+requests to the short-blogging service SeenThis <http://seenthis.net/>
+from Python.
+
+Copyright (c) 2011 by Stephane Bortzmeyer
+free software, see LICENSE file for details
+
+
+To install;
+
+$ python setup.py install
+
+Examples of use are the scripts seenthis-backup.py (to backup all your
+seens) and seenthis-post.py (to post a message).
