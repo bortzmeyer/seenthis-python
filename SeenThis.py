@@ -6,6 +6,7 @@ http://seenthis.net/messages/14646
 import os
 import sys
 import urllib2
+import locale
 import base64
 from FeedParserPlus import FeedParserPlus
 from simpletal import simpleTAL, simpleTALES, simpleTALUtils
@@ -22,8 +23,10 @@ mytemplate = """
     <summary tal:content="message"/>
 </entry>
 """
-myencoding = "ISO-8859-1" # TODO: retrieve from locale
-
+myencoding = locale.getpreferredencoding()
+if myencoding is None:
+    myencoding='UTF-8'
+    
 class InternalError(Exception):
     pass
 
