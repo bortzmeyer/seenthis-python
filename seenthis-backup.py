@@ -6,4 +6,4 @@ st = SeenThis.Connection()
 
 result = st.get(n = 10000)
 
-print result
+print result.serialize()
