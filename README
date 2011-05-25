@@ -12,3 +12,4 @@ $ python setup.py install
 
 Examples of use are the scripts seenthis-backup.py (to backup all your
 seens) and seenthis-post.py (to post a message).
+
