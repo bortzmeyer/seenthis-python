@@ -6,4 +6,5 @@ st = SeenThis.Connection()
 
 result = st.get(n = 10000)
 
-print result
+print result # TODO: serialize it as Atom and/or JSON
+

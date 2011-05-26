@@ -1,4 +1,6 @@
 """
+Documentation of the SeenThis API:
+
 http://seenthis.net/fran%C3%A7ais/mentions/article/api
 http://seenthis.net/messages/14646
 """
@@ -7,8 +9,15 @@ import os
 import sys
 import urllib2
 import base64
-import feedparser
-from simpletal import simpleTAL, simpleTALES, simpleTALUtils
+try:
+    import feedparser
+except ImportError:
+    print >>sys.stderr, "I need the module feedparser, see <http://www.feedparser.org/>"
+    sys.exit(1)
+try:
+    from simpletal import simpleTAL, simpleTALES, simpleTALUtils
+except ImportError:
+    print >>sys.stderr, "I need the module simpleTAL, see <http://www.owlfish.com/software/simpleTAL/>"
 
 __VERSION__ = '0.0'
 
