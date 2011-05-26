@@ -17,6 +17,6 @@ setup(name='SeenThis',
       scripts=['seenthis-backup.py', 'seenthis-post.py'],
       data_files=[('/usr/local/doc/SeenThis', ['README',]),],
       provides=['SeenThis',],
-      install_requires=['simpletal', 'feedparser'] # TODO: even when simpletal is installed, setup.py tries to download it from PyPi
+      install_requires=['feedparser', 'simpletal'] # TODO: even when simpletal is installed, setup.py tries to download it from PyPi, probably because there is no locally installed egg for it in the Debian package
       )
 # TODO: add classifiers
