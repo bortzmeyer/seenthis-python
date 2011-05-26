@@ -1,15 +1,43 @@
-This module, currently in a very preliminar stage, allows to make
-requests to the short-blogging service SeenThis <http://seenthis.net/>
-from Python.
+This module, currently in a preliminar stage, allows to make requests
+to the short-blogging service SeenThis <http://seenthis.net/> from
+Python.
 
 Copyright (c) 2011 by Stephane Bortzmeyer
 free software, see LICENSE file for details
 
+*** Install ***
 
-To install;
+1) Short method
 
-$ python setup.py install
+# python setup.py install
+
+2) Long method, if the above does not work or if you want to know more
+
+This module uses "distribute", which should be compatible with
+"setuptools". If it is not present, it is automatically
+downloaded. Same thing for the required modules, which are searched on
+PyPi and installed. If you prefer to use local versions, be sure to
+install them before running setup.py.
+
+OS-specific notes:
+
+Debian: install packages "python-setuptools python-simpletal
+python-feedparser" before running setup.py and you'll benefit from
+Debian packaging for most of the modules.
+
+Gentoo: TODO
+
+*** Usage ***
 
 Examples of use are the scripts seenthis-backup.py (to backup all your
 seens) and seenthis-post.py (to post a message).
 
+Both need a file storing SeenThis authentication info. The file must
+be named $HOME/.seenthis/auth and contain two lines, one for the user
+name and one for the password.
+
+*** Author ***
+
+You can always write me at stephane+seenthis@bortzmeyer.org
+My account on SeenThis is "bortzmeyer"
+<http://seenthis.net/people/st%C3%A9phane-bortzmeyer>
