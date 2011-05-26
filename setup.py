@@ -1,7 +1,9 @@
 #!/usr/bin/env python
 
-from distutils.core import setup
+from distribute_setup import use_setuptools
+use_setuptools()
 
+from setuptools import setup, find_packages
 setup(name='SeenThis',
       version='0.0',
       description='Use the SeenThis API',
@@ -15,6 +17,6 @@ setup(name='SeenThis',
       scripts=['seenthis-backup.py', 'seenthis-post.py'],
       data_files=[('/usr/local/doc/SeenThis', ['README',]),],
       provides=['SeenThis',],
-      requires=['TODO_seems_completely_ignored', 'feedparser']
+      install_requires=['simpletal', 'feedparser'] # TODO: even when simpletal is installed, setup.py tries to download it from PyPi
       )
 # TODO: add classifiers
