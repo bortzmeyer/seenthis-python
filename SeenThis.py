@@ -8,12 +8,11 @@ http://seenthis.net/messages/14646
 import os
 import sys
 import urllib2
+import locale
 import base64
-try:
-    import feedparser
-except ImportError:
-    print >>sys.stderr, "I need the module feedparser, see <http://www.feedparser.org/>"
-    sys.exit(1)
+
+import FeedParserPlus
+
 try:
     from simpletal import simpleTAL, simpleTALES, simpleTALUtils
 except ImportError:
@@ -31,8 +30,10 @@ mytemplate = """
     <summary tal:content="message"/>
 </entry>
 """
-myencoding = "ISO-8859-1" # TODO: retrieve from locale
-
+myencoding = locale.getpreferredencoding()
+if myencoding is None:
+    myencoding='UTF-8'
+    
 class InternalError(Exception):
     pass
 
@@ -67,7 +68,8 @@ class Connection:
 
         To get all the messages, just set n to a very high number.
 
-        The result is a feedparser object.
+        The result is a FeedParserPlus object (which inherits from
+        traditional FeedparserDict).
         """
         total = 0
         over = False
@@ -84,7 +86,7 @@ class Connection:
             self._add_headers(request)
             server = urllib2.urlopen(request)
             data = server.read()
-            atom_feed = feedparser.parse(data) # TODO handle errors
+            atom_feed = FeedParserPlus.parse(data) # TODO handle errors
             got = len(atom_feed['entries'])
             if got == 0:
                 over = True
