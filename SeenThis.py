@@ -11,7 +11,7 @@ import urllib2
 import locale
 import base64
 
-import FeedParserPlus
+from FeedParserPlus import FeedParserPlus
 
 try:
     from simpletal import simpleTAL, simpleTALES, simpleTALUtils
@@ -37,15 +37,20 @@ if myencoding is None:
 class InternalError(Exception):
     pass
 
+class CredentialsNotFound(InternalError):
+    pass
+
 class Connection:
 
-    def __init__(self):
-        # TODO: an optional argument to indicate the user name
-        if not os.path.exists(authfile):
-            raise InternalError("Cannot find %s" % authfile)
-        auth = open(authfile)
-        self.username = auth.readline()[:-1]
-        self.password = auth.readline()[:-1]
+    def __init__(self, credentials=None):
+        if credentials:
+            self.username, self.password = credentials
+        else:
+            if not os.path.exists(authfile):
+                raise CredentialsNotFound(authfile)
+            auth = open(authfile)
+            self.username = auth.readline()[:-1]
+            self.password = auth.readline()[:-1]
         self.retrieve_endpoint = retrieve_endpoint_tmpl % self.username
         self.template = simpleTAL.compileXMLTemplate(mytemplate)
         

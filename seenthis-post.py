@@ -6,7 +6,12 @@ import os
 import tempfile
 import subprocess
 
-st = SeenThis.Connection()
+try:
+    st = SeenThis.Connection()
+except SeenThis.CredentialsNotFound as e:
+    print 'Credentials not found at %s, using alternate login.' % e
+    credentials = raw_input('Login? '), raw_input('Password? ')
+    st = SeenThis.Connection(credentials)
 
 if len(sys.argv) != 1:
     print >>sys.stderr, ("Usage: %s\nThe message is read on the standard input" % \
@@ -18,7 +23,7 @@ if not sys.stdin.isatty():
     message = sys.stdin.read()
 # else it is an interactive user
 else:
-    if os.environ['EDITOR']:
+    if 'EDITOR' in os.environ and os.environ['EDITOR']:
         editor = os.environ['EDITOR']
     else:
         editor = 'vi'

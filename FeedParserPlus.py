@@ -1,4 +1,10 @@
 try:
+    from simpletal import simpleTAL, simpleTALES, simpleTALUtils
+except ImportError:
+    print >>sys.stderr, "I need the module simpleTAL, see <http://www.owlfish.com/software/simpleTAL/>"
+    sys.exit(1)
+
+try:
     import feedparser
 except ImportError:
     import sys
