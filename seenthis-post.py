@@ -23,7 +23,7 @@ if not sys.stdin.isatty():
     message = sys.stdin.read()
 # else it is an interactive user
 else:
-    if os.environ['EDITOR']:
+    if 'EDITOR' in os.environ and os.environ['EDITOR']:
         editor = os.environ['EDITOR']
     else:
         editor = 'vi'
