@@ -10,8 +10,9 @@ import sys
 import urllib2
 import locale
 import base64
+import traceback
 
-import FeedParserPlus
+from FeedParserPlus import FeedParserPlus
 
 try:
     from simpletal import simpleTAL, simpleTALES, simpleTALUtils
@@ -37,15 +38,20 @@ if myencoding is None:
 class InternalError(Exception):
     pass
 
+class CredentialsNotFound(InternalError):
+    pass
+
 class Connection:
 
-    def __init__(self):
-        # TODO: an optional argument to indicate the user name
-        if not os.path.exists(authfile):
-            raise InternalError("Cannot find %s" % authfile)
-        auth = open(authfile)
-        self.username = auth.readline()[:-1]
-        self.password = auth.readline()[:-1]
+    def __init__(self, credentials=None):
+        if credentials:
+            self.username, self.password = credentials
+        else:
+            if not os.path.exists(authfile):
+                raise CredentialsNotFound(authfile)
+            auth = open(authfile)
+            self.username = auth.readline()[:-1]
+            self.password = auth.readline()[:-1]
         self.retrieve_endpoint = retrieve_endpoint_tmpl % self.username
         self.template = simpleTAL.compileXMLTemplate(mytemplate)
         
@@ -86,7 +92,19 @@ class Connection:
             self._add_headers(request)
             server = urllib2.urlopen(request)
             data = server.read()
-            atom_feed = FeedParserPlus.parse(data) # TODO handle errors
+            try:
+                atom_feed = FeedParserPlus.parse(data)
+            except:
+                import tempfile
+                (datafilefd, datafilename) = tempfile.mkstemp(suffix=".atom",
+                                                            prefix="seenthis_", text=True)
+                datafile = os.fdopen(datafilefd, 'w')
+                datafile.write(data)
+                datafile.close()
+                print >>sys.stderr, \
+                      "Parsing error of the answer. The data has been saved in %s" % \
+                      datafilename
+                raise
             got = len(atom_feed['entries'])
             if got == 0:
                 over = True

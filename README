@@ -17,7 +17,15 @@ This module uses "distribute", which should be compatible with
 "setuptools". If it is not present, it is automatically
 downloaded. Same thing for the required modules, which are searched on
 PyPi and installed. If you prefer to use local versions, be sure to
-install them before running setup.py.
+install them before running setup.py. Given the awful state of Python
+packaging tools (see "Python packaging" by Tarek Ziade in
+"Architecture of Open Source Software", Greg Wilson and Amy Brown
+<http://www.aosabook.org/en/index.html>), you'll probably have to do
+many things by hand. This module requires:
+
+* SimpleTAL <http://www.owlfish.com/software/simpleTAL/>
+* FeedParser <http://code.google.com/p/feedparser/> At least version 5 because of 
+  <http://code.google.com/p/feedparser/issues/detail?id=91>
 
 OS-specific notes:
 
@@ -46,3 +54,5 @@ The SeenThis API is documented (in French only) in
 You can always write me at stephane+seenthis@bortzmeyer.org
 My account on SeenThis is "bortzmeyer"
 <http://seenthis.net/people/st%C3%A9phane-bortzmeyer>
+
+With patches from Valentin Lorentz <https://github.com/ProgVal/seenthis-python>
