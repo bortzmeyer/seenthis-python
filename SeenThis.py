@@ -10,6 +10,7 @@ import sys
 import urllib2
 import locale
 import base64
+import traceback
 
 from FeedParserPlus import FeedParserPlus
 
@@ -91,7 +92,19 @@ class Connection:
             self._add_headers(request)
             server = urllib2.urlopen(request)
             data = server.read()
-            atom_feed = FeedParserPlus.parse(data) # TODO handle errors
+            try:
+                atom_feed = FeedParserPlus.parse(data)
+            except:
+                import tempfile
+                (datafilefd, datafilename) = tempfile.mkstemp(suffix=".atom",
+                                                            prefix="seenthis_", text=True)
+                datafile = os.fdopen(datafilefd, 'w')
+                datafile.write(data)
+                datafile.close()
+                print >>sys.stderr, \
+                      "Parsing error of the answer. The data has been saved in %s" % \
+                      datafilename
+                raise
             got = len(atom_feed['entries'])
             if got == 0:
                 over = True
