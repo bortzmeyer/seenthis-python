@@ -42,6 +42,8 @@ else:
         raise
     tmpfile.close()
 result = st.post(message)
+# TODO: if posting fails (wrong password, network problem, etc), the
+# message is lost. It can be a problem.
 print result
 
 
