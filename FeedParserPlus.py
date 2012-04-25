@@ -11,6 +11,12 @@ except ImportError:
     print >>sys.stderr, "I need the module feedparser, see <http://www.feedparser.org/>"
     sys.exit(1)
 
+try:
+    from simpletal import simpleTAL, simpleTALES, simpleTALUtils
+except ImportError:
+    print >>sys.stderr, "I need the module simpleTAL, see <http://www.owlfish.com/software/simpleTAL/>"
+    sys.exit(1)
+
 mytemplate = """
 <feed xmlns="http://www.w3.org/2005/Atom">
   <title tal:condition="feed/title" tal:content="feed/title"/>
