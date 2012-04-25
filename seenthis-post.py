@@ -18,6 +18,8 @@ if len(sys.argv) != 1:
                          sys.argv[0])
     sys.exit(1)
 
+save_message = False # In case of crash
+
 # If the user redirected standard input from a file or a process
 if not sys.stdin.isatty():
     message = sys.stdin.read()
@@ -27,6 +29,7 @@ else:
         editor = os.environ['EDITOR']
     else:
         editor = 'vi'
+    save_message = True
     tmpfile = tempfile.NamedTemporaryFile(delete=True)
     try:
         run_editor = subprocess.Popen([editor, tmpfile.name],
@@ -41,7 +44,14 @@ else:
         print >>sys.stderr, ("Cannot run: \"%s %s\"" % (editor, tmpfile.name))
         raise
     tmpfile.close()
-result = st.post(message)
+try:
+    result = st.post(message)
+except:
+    if save_message:
+        tmpfile = tempfile.NamedTemporaryFile(delete=False)
+        tmpfile.write(message)
+        print "CRASH: *** Message saved in %s ***\n\n" % tmpfile.name
+    raise
 print result
 
 
