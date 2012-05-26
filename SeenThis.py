@@ -1,8 +1,6 @@
 """
-Documentation of the SeenThis API:
+Documentation of the SeenThis API: see the README
 
-http://seenthis.net/fran%C3%A7ais/mentions/article/api
-http://seenthis.net/messages/14646
 """
 
 import os
@@ -26,6 +24,7 @@ __VERSION__ = '0.0'
 authfile = "%s/.seenthis/auth" % os.environ['HOME']
 create_endpoint = 'https://seenthis.net/api/messages'
 retrieve_endpoint_tmpl = 'https://seenthis.net/api/people/%s/messages'
+get_endpoint_tmpl = 'https://seenthis.net/api/messages/%i'
 url_endpoint_tmpl = 'https://seenthis.net/api/url/%s'
 mytemplate = """
 <entry xmlns='http://www.w3.org/2005/Atom'
@@ -39,6 +38,9 @@ if myencoding is None:
     myencoding='UTF-8'
     
 class InternalError(Exception):
+    pass
+
+class NotFound(Exception):
     pass
 
 class CredentialsNotFound(InternalError):
@@ -72,8 +74,28 @@ class Connection:
     def get_message(self, msgid):
         """ Returns a FeedParserPlus object (which inherits from
         traditional FeedparserDict) representing one SeenThis message. """
-        raise InternalError("TODO: not yet implemented")
-        
+        endpoint = get_endpoint_tmpl % int(msgid)
+        request = urllib2.Request(url=endpoint)
+        self._add_headers(request)
+        server = urllib2.urlopen(request)
+        data = server.read()
+        try:
+            atom_entry = FeedParserPlus.parse(data)
+        except:
+            import tempfile
+            (datafilefd, datafilename) = tempfile.mkstemp(suffix=".atom",
+                                                          prefix="seenthis_", text=True)
+            datafile = os.fdopen(datafilefd, 'w')
+            datafile.write(data)
+            datafile.close()
+            raise InvalidResponse("ATOM parsing error of the answer. The data has been saved in %s" % datafilename)
+        # If the message-ID does not exist, SeenThis does not return a
+        # 404 and sends back an invalid XML file :-(
+        # http://seenthis.net/messages/70646 So, we hack.
+        if atom_entry.has_key("bozo_exception"):
+            raise NotFound("Message %i does not apparently exist" % int(msgid))
+        return atom_entry
+    
     def get(self, n=None):
         """
         n is the number of messages to retrieve. When None, we just retrieve what
@@ -131,6 +153,9 @@ class Connection:
         return result
 
     def post(self, message):
+        # TODO: allows to use a message-ID as parameter and set
+        # thr:in-reply-to (the post should then go under an existing
+        # thread.
         context = simpleTALES.Context(allowPythonPath=False)
         context.addGlobal ("message", unicode(message, encoding=myencoding))
         result = simpleTALUtils.FastStringOutput()
@@ -144,7 +169,7 @@ class Connection:
     def url_exists(self, url):
         """ Returns an dictionary. Field "found" is a boolean indicating if
         the URL was found. Field "messages" is an array of message numbers
-        where the URL is found. You can then use the future TODO get_message()
+        where the URL is found. You can then use the get_message()
         method to retrieve it. """
         digester = hashlib.md5()
         digester.update(url)
