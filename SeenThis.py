@@ -8,7 +8,9 @@ http://seenthis.net/messages/14646
 import os
 import sys
 import urllib2
+import hashlib
 import locale
+import json
 import base64
 import traceback
 
@@ -24,6 +26,7 @@ __VERSION__ = '0.0'
 authfile = "%s/.seenthis/auth" % os.environ['HOME']
 create_endpoint = 'https://seenthis.net/api/messages'
 retrieve_endpoint_tmpl = 'https://seenthis.net/api/people/%s/messages'
+url_endpoint_tmpl = 'https://seenthis.net/api/url/%s'
 mytemplate = """
 <entry xmlns='http://www.w3.org/2005/Atom'
        xmlns:thr='http://purl.org/syndication/thread/1.0'
@@ -39,6 +42,9 @@ class InternalError(Exception):
     pass
 
 class CredentialsNotFound(InternalError):
+    pass
+
+class InvalidResponse(Exception):
     pass
 
 class Connection:
@@ -63,7 +69,11 @@ class Connection:
         if post:
             r.add_header('Content-Type', 'application/atom+xml;type=entry')
 
-    # TODO: how to retrieve one message? An ID parameter?
+    def get_message(self, msgid):
+        """ Returns a FeedParserPlus object (which inherits from
+        traditional FeedparserDict) representing one SeenThis message. """
+        raise InternalError("TODO: not yet implemented")
+        
     def get(self, n=None):
         """
         n is the number of messages to retrieve. When None, we just retrieve what
@@ -130,3 +140,22 @@ class Connection:
         self._add_headers(request, post=True)
         server = urllib2.urlopen(request)
         return server.read()
+
+    def url_exists(self, url):
+        """ Returns an dictionary. Field "found" is a boolean indicating if
+        the URL was found. Field "messages" is an array of message numbers
+        where the URL is found. You can then use the future TODO get_message()
+        method to retrieve it. """
+        digester = hashlib.md5()
+        digester.update(url)
+        endpoint = url_endpoint_tmpl % digester.hexdigest()
+        request = urllib2.Request(url=endpoint)
+        self._add_headers(request)
+        server = urllib2.urlopen(request)
+        result = server.read()
+        try:
+            values = json.loads(result)
+        except ValueError:
+            raise InvalidResponse("Invalid JSON data returned by SeenThis")
+        return {"found": values["status"] == "success",
+                 "messages": values["messages"]}

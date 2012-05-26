@@ -38,7 +38,8 @@ Gentoo: TODO
 *** Usage ***
 
 Examples of use are the scripts seenthis-backup.py (to backup all your
-seens) and seenthis-post.py (to post a message).
+seens), seenthis-post.py (to post a message) and seenthis-test-url.py
+(to test if a given URL is alreday in SeenThis).
 
 Both need a file storing SeenThis authentication info. The file must
 be named $HOME/.seenthis/auth and contain two lines, one for the user
@@ -46,8 +47,10 @@ name and one for the password.
 
 *** API ***
 
-The SeenThis API is documented (in French only) in 
-<http://seenthis.net/fran%C3%A7ais/mentions/article/api>
+The SeenThis API is documented (in French only) in
+<http://seenthis.net/fran%C3%A7ais/mentions/article/api> but some
+functions are documented elsewhere such as
+<http://seenthis.net/messages/70484>.
 
 *** Author ***
 
