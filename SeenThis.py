@@ -5,6 +5,7 @@ Documentation of the SeenThis API: see the README
 
 import os
 import sys
+import string
 import urllib2
 import hashlib
 import locale
@@ -96,7 +97,7 @@ class Connection:
             raise NotFound("Message %i does not apparently exist" % int(msgid))
         return atom_entry
     
-    def get(self, n=None):
+    def get(self, n=None, continue_on_error=False):
         """
         n is the number of messages to retrieve. When None, we just retrieve what
         SeenThis gives us (today, the last 25 messages). Otherwise, we
@@ -124,6 +125,11 @@ class Connection:
             self._add_headers(request)
             server = urllib2.urlopen(request)
             data = server.read()
+            # Bad workaround FeedParser's bug #91 http://code.google.com/p/feedparser/issues/detail?id=91
+            for line in data:
+                # Awfully slow, we should replace :-) it with something faster
+                if string.find(data, "!DOCTYPE") != -1:
+                    data = string.replace(data, "!DOCTYPE", "!\ DOCTYPE")
             try:
                 atom_feed = FeedParserPlus.parse(data)
             except:
@@ -136,7 +142,15 @@ class Connection:
                 print >>sys.stderr, \
                       "Parsing error of the answer. The data has been saved in %s" % \
                       datafilename
-                raise
+                if continue_on_error:
+                    (exc_type, exc_value, exc_traceback) = sys.exc_info()
+                    print "Exception %s \"%s\" %s" % \
+                          (exc_type, exc_value, 
+                           traceback.format_list(traceback.extract_tb(exc_traceback)))
+                    step += 1
+                    continue
+                else:
+                    raise
             got = len(atom_feed['entries'])
             if got == 0:
                 over = True
@@ -147,7 +161,8 @@ class Connection:
                 if result is None:
                     result = atom_feed
                 else:
-                    result['entries'].append(atom_feed['entries'])
+                    for entry in atom_feed['entries']:
+                        result['entries'].append(entry)
                 if n is not None and total >= n:
                     over = True
         return result

@@ -9,7 +9,7 @@ except SeenThis.CredentialsNotFound as e:
     credentials = raw_input('Login? '), raw_input('Password? ')
     st = SeenThis.Connection(credentials)
 
-result = st.get(n = 10000)
+result = st.get(n = 10000, continue_on_error=True)
 
 print result.serialize() # TODO: serialize to JSON
 
