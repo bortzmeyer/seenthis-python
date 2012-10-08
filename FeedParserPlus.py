@@ -31,9 +31,14 @@ mytemplate = """
     <summary tal:condition="entry/summary" tal:content="entry/summary"/>
     <content tal:condition="entry/content" tal:content="python: entry.content[0]['value']"/> <!-- TODO: metadata and the other items in content -->
     <id tal:condition="entry/id" tal:content="entry/id"/>
+    <author tal:condition="entry/author">
+       <name tal:content="python: entry.authors[0]['name']"/>
+       <email tal:content="python: entry.authors[0]['email']"/>
+       <!-- <uri tal:content="python: entry.authors[0]['uri']"/> TODO: not available with FeedParser :-( -->
+    </author>
     <published tal:condition="entry/published" tal:content="entry/published"/>
     <updated tal:condition="entry/updated" tal:content="entry/updated"/>
-    <!-- TODO other entry fields -->
+    <!-- TODO other entry fields? <link>? -->
   </entry>
 </feed>
 """
