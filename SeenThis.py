@@ -34,6 +34,7 @@ mytemplate = """
     <summary tal:content="message"/>
 </entry>
 """
+outsideencoding = "UTF-8"
 myencoding = locale.getpreferredencoding()
 if myencoding is None:
     myencoding='UTF-8'
@@ -174,7 +175,8 @@ class Connection:
         context = simpleTALES.Context(allowPythonPath=False)
         context.addGlobal ("message", unicode(message, encoding=myencoding))
         result = simpleTALUtils.FastStringOutput()
-        self.template.expand (context, result)
+        self.template.expand (context, result, outputEncoding=outsideencoding)
+        print result.getvalue()
         request = urllib2.Request(url=create_endpoint,
                                   data=result.getvalue())
         self._add_headers(request, post=True)
