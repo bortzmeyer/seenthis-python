@@ -176,7 +176,6 @@ class Connection:
         context.addGlobal ("message", unicode(message, encoding=myencoding))
         result = simpleTALUtils.FastStringOutput()
         self.template.expand (context, result, outputEncoding=outsideencoding)
-        print result.getvalue()
         request = urllib2.Request(url=create_endpoint,
                                   data=result.getvalue())
         self._add_headers(request, post=True)
