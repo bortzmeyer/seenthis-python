@@ -35,6 +35,9 @@ Debian packaging for most of the modules.
 
 Gentoo: TODO
 
+MacOSX: if you have python2 you might have to do
+`easy_install http://www.owlfish.com/software/simpleTAL/downloads/SimpleTAL-4.3.tar.gz`
+
 *** Usage ***
 
 Examples of use are the scripts seenthis-backup.py (to backup all your
